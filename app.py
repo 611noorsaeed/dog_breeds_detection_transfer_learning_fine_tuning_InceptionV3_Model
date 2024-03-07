@@ -1,3 +1,4 @@
+# import all packages------------------------------------------
 from flask import Flask, render_template, request
 from werkzeug.utils import secure_filename
 import os
@@ -5,14 +6,27 @@ import tensorflow as tf
 from tensorflow.keras.preprocessing import image
 import numpy as np
 from flask_sqlalchemy import SQLAlchemy
+from flask_mail import Mail,Message
 
-
-# Create an app
+# Create an app------------------------------------------------
 app = Flask(__name__)
+
+# database configuration---------------------------------------
 app.secret_key = "Secret Key"
 app.config['SQLALCHEMY_DATABASE_URI'] = "mysql://root:@localhost/signdb"
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
+
+# email message configuration---------------------------------
+# email configuration
+app.config['MAIL_SERVER'] = 'smtp.gmail.com'
+app.config['MAIL_PORT'] = 465
+app.config['MAIL_USERNAME'] = '611noorsaeed@gmail.com'
+app.config['MAIL_PASSWORD'] = 'mpdd pojn lzoe qckk'  # Replace 'your_gmail_password' with your actual Gmail password
+app.config['MAIL_USE_TLS'] = False
+app.config['MAIL_USE_SSL'] = True
+
+mail = Mail(app)
 
 
 # Define your model class for the 'signup' table
@@ -34,10 +48,10 @@ def signup():
         return render_template('index.html', signup_message='User signed up successfully!')
 
 
+
+# predictive function
 class_labels = ['beagle', 'bulldog', 'dalmatian', 'german-shepherd', 'husky', 'labrador-retriever', 'poodle',
                 'rottweiler']
-
-
 # Function to preprocess and predict
 def predict_and_display(img):
     # Load the model
@@ -71,9 +85,15 @@ def home():
 
             predicted_class, confidence = predict_and_display(img)
 
+            # Send mail alert
+            msg = Message('DogBreed Alert', sender='611noorsaeed@gmail.com', recipients=['mydearisdear611@gmail.com'])
+            # Constructing the email body
+            msg.body = f"Dear DogBreed Keeper,\n\nI hope this email finds you well.\n\nI am writing to inform you about an important event regarding your honey bee operations. Our AI model has detected an anomaly in the uploaded image, which we believe requires your attention.\n\nAnalysis Results:\n- Detected Issue: {predicted_class}\n- Confidence Level: {confidence:.2f}%\n\nAttached to this email, you will find a detailed report providing insights into the detected issue, along with recommendations for appropriate actions.\n\nShould you require any further assistance or have any questions, please feel free to contact us.\n\nBest regards,\nYour AI Bot"
+            # Send the email
+            mail.send(msg)
 
-
-            return render_template('index.html', image_path=filepath, actual_label=predicted_class,
+            alert_message = "Alert Message has been sent to the Dog Breed keeper "
+            return render_template('index.html',alert_message=alert_message, image_path=filepath, actual_label=predicted_class,
                                    predicted_label=predicted_class, confidence=confidence)
     return render_template('index.html', message='Upload an image')
 
