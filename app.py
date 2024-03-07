@@ -21,8 +21,8 @@ db = SQLAlchemy(app)
 # email configuration
 app.config['MAIL_SERVER'] = 'smtp.gmail.com'
 app.config['MAIL_PORT'] = 465
-app.config['MAIL_USERNAME'] = '611noorsaeed@gmail.com'
-app.config['MAIL_PASSWORD'] = 'mpdd pojn lzoe qckk'  # Replace 'your_gmail_password' with your actual Gmail password
+app.config['MAIL_USERNAME'] = "senderemail@gmail.com"
+app.config['MAIL_PASSWORD'] = 'created password'  # Replace 'your_gmail_password' with your actual Gmail password
 app.config['MAIL_USE_TLS'] = False
 app.config['MAIL_USE_SSL'] = True
 
@@ -67,6 +67,7 @@ def predict_and_display(img):
     return predicted_class_name, confidence_level
 
 
+
 # Route to the home page
 @app.route('/', methods=['GET', 'POST'])
 def home():
@@ -86,7 +87,7 @@ def home():
             predicted_class, confidence = predict_and_display(img)
 
             # Send mail alert
-            msg = Message('DogBreed Alert', sender='611noorsaeed@gmail.com', recipients=['mydearisdear611@gmail.com'])
+            msg = Message('DogBreed Alert', sender='senderemail@gmail.com', recipients=['receiver@gmail.com'])
             # Constructing the email body
             msg.body = f"Dear DogBreed Keeper,\n\nI hope this email finds you well.\n\nI am writing to inform you about an important event regarding your honey bee operations. Our AI model has detected an anomaly in the uploaded image, which we believe requires your attention.\n\nAnalysis Results:\n- Detected Issue: {predicted_class}\n- Confidence Level: {confidence:.2f}%\n\nAttached to this email, you will find a detailed report providing insights into the detected issue, along with recommendations for appropriate actions.\n\nShould you require any further assistance or have any questions, please feel free to contact us.\n\nBest regards,\nYour AI Bot"
             # Send the email
